@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Candidates</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      color: #333;
+      background: #f4f4f9;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 2rem auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      margin: 1rem auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h2, .card h3 {
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    /* Login Form */
+    .form {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .form button {
+      width: 100%;
+      padding: 0.8rem;
+      background: #3498db;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .form button:hover {
+      background: #2980b9;
+    }
+
+    /* Dashboard */
+    .dashboard {
+      text-align: center;
+    }
+
+    .dashboard button {
+      background: #e74c3c;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    .dashboard button:hover {
+      background: #c0392b;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 25px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+    }
+
+    .candidate-card {
+      background: #ecf0f1;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .candidate-card h3 {
+      color: #34495e;
+    }
+
+    .candidate-card button {
+      background: #e67e22;
+      color: white;
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .candidate-card button:hover {
+      background: #d35400;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+
+    <!-- Dashboard -->
+    <div id="dashboard-section" style="display: none;">
+      <div class="dashboard">
+        <h2>Welcome to the Voting Dashboard</h2>
+        <button>Profile</button>
+        <button>Log Out</button>
+      </div>
+
+      <!-- View Candidates Section -->
+      <div id="candidates-section">
+        <h3>Available Candidates</h3>
+        <div class="candidate-card">
+          <h3>John Doe</h3>
+          <p>Position: Student Council President</p>
+          <button">Vote</button>
+        </div>
+        <div class="candidate-card">
+          <h3>Jane Smith</h3>
+          <p>Position: Faculty Representative</p>
+          <button>Vote</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

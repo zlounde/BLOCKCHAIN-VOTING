@@ -1,0 +1,17 @@
+<!-- templates/elections/view_candidates.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>View Candidates</title>
+</head>
+<body>
+  <h1>{{ election.title }} - Candidates</h1>
+  {% for candidate in candidates %}
+    <div>
+      <h3>{{ candidate.name }}</h3>
+      <p>{{ candidate.manifesto }}</p>
+    </div>
+  {% endfor %}
+  <a href="{{ election.id }}/vote/">Vote Now</a>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!-- templates/elections/vote.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Vote</title>
+</head>
+<body>
+  <h1>{{ election.title }} - Vote</h1>
+  <form method="POST">
+    {% csrf_token %}
+    {% for candidate in candidates %}
+      <div>
+        <input type="radio" name="candidate" value="{{ candidate.id }}" id="candidate_{{ candidate.id }}">
+        <label for="candidate_{{ candidate.id }}">{{ candidate.name }}</label>
+      </div>
+    {% endfor %}
+    <button type="submit">Submit Vote</button>
+  </form>
+</body>
+</html>

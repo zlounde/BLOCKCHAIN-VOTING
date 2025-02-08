@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>University Blockchain Voting System</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      color: #333;
+      background: #f4f4f9;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .nav-links li {
+      margin: 0 1rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #e67e22;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .profile-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background-color: #e67e22;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .profile-icon:hover {
+      background-color: #d35400;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background: white;
+      color: #333;
+      padding: 1rem;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      min-width: 150px;
+    }
+
+    .profile-dropdown:hover .dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      color: #333;
+      text-decoration: none;
+      padding: 0.5rem 0;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f4f4f9;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(to right, #34495e, #2c3e50);
+      color: white;
+      text-align: center;
+      padding: 4rem 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero .btn {
+      background: #e67e22;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 25px;
+      transition: background 0.3s ease;
+    }
+
+    .hero .btn:hover {
+      background: #d35400;
+    }
+
+    /* Info Section */
+    .info-section {
+      padding: 3rem 1rem;
+      background: #ffffff;
+      text-align: left;
+    }
+
+    .info-section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    .info-section p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #555;
+    }
+
+    .info-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <h1>University Voting System</h1>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'About' %}">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="profile-dropdown">
+        <div class="profile-icon">
+          <span>User</span>
+        </div>
+        <div class="dropdown-menu">
+          <a href="#">Profile</a>
+          <a href="#">Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+      <div class="container">
+        <h2>Secure & Transparent University Elections</h2>
+        <p>Empowering voters with blockchain technology for a fair and efficient voting experience.</p>
+        <a href="{% url 'login' %}?next={% url 'elections' %}" class="btn">Elections</a>
+      </div>
+    </section>
+
+  <!-- Info Section -->
+  <section id="info" class="info-section">
+    <div class="container">
+      <h2>Why Choose Online Voting?</h2>
+      <p>Online voting empowers universities to create a fair and transparent election process. It ensures accessibility for all participants, including those studying abroad or working remotely. With blockchain technology, elections become secure, efficient, and tamper-proof.</p>
+      <img src="example.jpg" alt="Online Voting Illustration">
+      <h2>Easy and Efficient Election Management</h2>
+      <p>Our platform allows you to organize elections without special hardware or software. It's simple to manage the electoral roll, communicate with voters, and process results directly online, saving time and resources.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="footer">
+    <div class="container">
+      <p>&copy; 2025 University Blockchain Voting System. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

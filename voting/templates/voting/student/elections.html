@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>University Blockchain Voting System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      color: #333;
+      background: #f4f4f9;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+    /* Elections Section */
+    .elections {
+      padding: 3rem 0;
+      background: #ecf0f1;
+      text-align: center;
+    }
+
+    .elections h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #2c3e50;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      margin: 1rem auto;
+      max-width: 400px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      color: #34495e;
+    }
+
+    .card p {
+      color: #555;
+      margin: 1rem 0;
+    }
+
+    .card .countdown {
+      font-weight: bold;
+      color: #e67e22;
+      margin: 1rem 0;
+    }
+
+    .card .btn {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 0.7rem 1.2rem;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 25px;
+    }
+
+    .card .btn:hover {
+      background: #2980b9;
+    }
+
+    /* Footer */
+    .footer {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <h1>University Blockchain Voting System</h1>
+  </header>
+
+  <!-- Ongoing Elections Section -->
+  <section class="elections">
+    <div class="container">
+      <h2>Ongoing Elections</h2>
+
+      {% for election in ongoing_elections %}
+      <div class="card">
+        <h3>{{ election.title }}</h3>
+        <p>Date: {{ election.date }}</p>
+        <a href="{{ election.id }}/candidates/" class="btn">View Candidates</a>
+        <a href="{{ election.id }}/vote/" class="btn">Vote Now</a>
+      </div>
+      {% empty %}
+      <p>No ongoing elections at the moment.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Upcoming Elections Section -->
+  <section class="elections">
+    <div class="container">
+      <h2>Upcoming Elections</h2>
+
+      {% for election in upcoming_elections %}
+      <div class="card">
+        <h3>{{ election.title }}</h3>
+        <p>Date: {{ election.date }}</p>
+        <p class="countdown">Time left: {{ election.countdown }}</p>
+        <a href="{{ election.id }}/candidates/" class="btn">View Candidates</a>
+      </div>
+      {% empty %}
+      <p>No upcoming elections at the moment.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 University Blockchain Voting System. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

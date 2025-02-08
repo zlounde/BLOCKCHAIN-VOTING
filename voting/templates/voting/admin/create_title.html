@@ -1,0 +1,50 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<div class="container">
+    <h2>Create Election Title</h2>
+    <form method="POST" action="{% url 'create_title' %}">
+        {% csrf_token %}
+        
+        <!-- Title Input -->
+        <label for="title">Election Title:</label>
+        <input type="text" id="title" name="title" required>
+        
+        <!-- School Dropdown -->
+        <label for="school">Select School:</label>
+        <select id="school" name="school" required>
+            <option value="">-- Select School --</option>
+            {% for school in schools %}
+            <option value="{{ school.id }}">{{ school.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- Department Dropdown -->
+        <label for="department">Select Department:</label>
+        <select id="department" name="department" required>
+            <option value="">-- Select Department --</option>
+            {% for department in departments %}
+            <option value="{{ department.id }}" data-school="{{ department.school_id }}">{{ department.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit">Save Title</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('school').addEventListener('change', function() {
+        var schoolId = this.value;
+        var departmentDropdown = document.getElementById('department');
+        
+        for (var i = 0; i < departmentDropdown.options.length; i++) {
+            var option = departmentDropdown.options[i];
+            
+            if (option.getAttribute('data-school') === schoolId || option.value === "") {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+        }
+    });
+</script>
+{% endblock %}

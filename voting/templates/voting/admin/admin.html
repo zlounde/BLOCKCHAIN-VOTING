@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - University Voting System</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      color: #333;
+      background: #f4f4f9;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    .navbar nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0;
+    }
+
+    .navbar nav ul li {
+      margin: 0 1rem;
+    }
+
+    .navbar nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .navbar nav ul li a:hover {
+      color: #e67e22;
+    }
+
+    /* Admin Section */
+    .admin {
+      padding: 3rem 0;
+      background: #ecf0f1;
+    }
+
+    .admin h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    .admin-options {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      margin: 0 0 1rem;
+      color: #34495e;
+    }
+
+    .card p {
+      color: #555;
+      margin: 1rem 0;
+    }
+
+    .card .btn {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 0.7rem 1.2rem;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 25px;
+      transition: background 0.3s ease;
+    }
+
+    .card .btn:hover {
+      background: #2980b9;
+    }
+
+    /* Footer */
+    .footer {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container">
+      <h1>Admin Panel - University Voting System</h1>
+      <nav>
+        <ul>
+          <li><a href="{% url 'manage_elections' %}">Manage Elections</a></li>
+          <li><a href="#Timer">Timer</a></li>
+          <li><a href="#view-results">View Results</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Admin Section -->
+  <section class="admin">
+    <div class="container">
+      <h2>Admin Dashboard</h2>
+      <div class="admin-options">
+         <!-- create title -->
+         <div class="card">
+          <h3>Create Title</h3>
+          <p>Create, or update title for the elections</p>
+          <a href="{% url 'create_title' %}" class="btn">Manage</a>
+        </div>
+        <!-- Manage Elections -->
+        <div class="card">
+          <h3>Manage Elections</h3>
+          <p>Create, or update elections for the university.</p>
+          <a href="{%url 'existing_elections'%}" class="btn">Manage</a>
+        </div>
+
+        <!-- Timer -->
+        <div class="card">
+          <h3>Timer</h3>
+          <p>set time</p>
+          <a href="#" class="btn">Manage</a>
+        </div>
+
+        <!-- View Results -->
+        <div class="card">
+          <h3>View Results</h3>
+          <p>See live election results and statistics.</p>
+          <a href="#" class="btn">View Results</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 University Blockchain Voting System. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

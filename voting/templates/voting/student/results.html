@@ -1,0 +1,16 @@
+<!-- templates/elections/results.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Results</title>
+</head>
+<body>
+  <h1>{{ election.title }} - Results</h1>
+  <ul>
+    {% for candidate, count in votes.items %}
+      <li>{{ candidate }}: {{ count }} votes</li>
+    {% endfor %}
+  </ul>
+  <a href="/">Back to Elections</a>
+</body>
+</html>
