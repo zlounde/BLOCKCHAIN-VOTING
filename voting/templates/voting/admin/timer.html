@@ -1,0 +1,114 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+
+<!-- Bootstrap CSS for better styling -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<style>
+    .container {
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2, h3 {
+        text-align: center;
+        color: #333;
+    }
+    .countdown {
+        font-weight: bold;
+        color: #dc3545;
+    }
+</style>
+
+<div class="container">
+    <h2>Set Election Timer</h2>
+    
+    <!-- Display Success & Error Messages -->
+    {% if messages %}
+        <div class="alert alert-info">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Form to Set Timer -->
+    <form method="POST" action="" class="mb-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title" class="form-label">Select Election Title:</label>
+            <select name="title" id="title" class="form-select" required>
+                <option value="">-- Select Election --</option>
+                {% for title in election_titles %}
+                <option value="{{ title.id }}">{{ title.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="start_time" class="form-label">Start Time:</label>
+            <input type="datetime-local" name="start_time" id="start_time" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="end_time" class="form-label">End Time:</label>
+            <input type="datetime-local" name="end_time" id="end_time" class="form-control" required>
+        </div>
+        
+        <button type="submit" class="btn btn-success w-100">Set Timer</button>
+    </form>
+
+    <!-- Display Upcoming & Ongoing Elections -->
+    <h3>Upcoming Elections</h3>
+    <ul class="list-group">
+        {% for election in upcoming_elections %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <strong>{{ election.title }}</strong>
+            <span>Starts: {{ election.start_time|date:"Y-m-d H:i" }}</span>
+            <span class="countdown" data-time="{{ election.start_time|date:'Y-m-d H:i:s' }}"></span>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No upcoming elections.</li>
+        {% endfor %}
+    </ul>
+    
+    <h3 class="mt-4">Ongoing Elections</h3>
+    <ul class="list-group">
+        {% for election in ongoing_elections %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <strong>{{ election.title }}</strong>
+            <span>Ends: {{ election.end_time|date:"Y-m-d H:i" }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No ongoing elections.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Countdown Timer Script -->
+<script>
+    function updateCountdown() {
+        document.querySelectorAll('.countdown').forEach(function(el) {
+            let endTime = new Date(el.getAttribute('data-time')).getTime();
+            let now = new Date().getTime();
+            let timeLeft = endTime - now;
+
+            if (timeLeft > 0) {
+                let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                el.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                el.innerHTML = "Election Started";
+            }
+        });
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+</script>
+
+{% endblock %}

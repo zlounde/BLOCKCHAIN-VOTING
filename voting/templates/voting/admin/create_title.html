@@ -1,50 +1,135 @@
 {% extends 'admin/base.html' %}
 {% block content %}
-<div class="container">
-    <h2>Create Election Title</h2>
-    <form method="POST" action="{% url 'create_title' %}">
-        {% csrf_token %}
-        
-        <!-- Title Input -->
-        <label for="title">Election Title:</label>
-        <input type="text" id="title" name="title" required>
-        
-        <!-- School Dropdown -->
-        <label for="school">Select School:</label>
-        <select id="school" name="school" required>
-            <option value="">-- Select School --</option>
-            {% for school in schools %}
-            <option value="{{ school.id }}">{{ school.name }}</option>
-            {% endfor %}
-        </select>
-        
-        <!-- Department Dropdown -->
-        <label for="department">Select Department:</label>
-        <select id="department" name="department" required>
-            <option value="">-- Select Department --</option>
-            {% for department in departments %}
-            <option value="{{ department.id }}" data-school="{{ department.school_id }}">{{ department.name }}</option>
-            {% endfor %}
-        </select>
-        
-        <button type="submit">Save Title</button>
-    </form>
-</div>
-
-<script>
-    document.getElementById('school').addEventListener('change', function() {
-        var schoolId = this.value;
-        var departmentDropdown = document.getElementById('department');
-        
-        for (var i = 0; i < departmentDropdown.options.length; i++) {
-            var option = departmentDropdown.options[i];
-            
-            if (option.getAttribute('data-school') === schoolId || option.value === "") {
-                option.style.display = "block";
-            } else {
-                option.style.display = "none";
-            }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Election Title</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #333;
         }
-    });
-</script>
+
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Title */
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+            text-align: left;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        /* Button */
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Election Title</h2>
+        <form method="POST" action="{% url 'create_title' %}">
+            {% csrf_token %}
+            
+            <!-- Title Input -->
+            <label for="title">Election Title:</label>
+            <input type="text" id="title" name="title" required>
+            
+            <!-- School Dropdown -->
+            <label for="school">Select School:</label>
+            <select id="school" name="school" required>
+                <option value="">-- Select School --</option>
+                {% for school in schools %}
+                <option value="{{ school.id }}">{{ school.name }}</option>
+                {% endfor %}
+            </select>
+            
+            <!-- Department Dropdown -->
+            <label for="department">Select Department:</label>
+            <select id="department" name="department" required>
+                <option value="">-- Select Department --</option>
+                {% for department in departments %}
+                <option value="{{ department.id }}" data-school="{{ department.school_id }}">{{ department.name }}</option>
+                {% endfor %}
+            </select>
+            
+            <button type="submit">Save Title</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('school').addEventListener('change', function() {
+            var schoolId = this.value;
+            var departmentDropdown = document.getElementById('department');
+            
+            for (var i = 0; i < departmentDropdown.options.length; i++) {
+                var option = departmentDropdown.options[i];
+                
+                if (option.getAttribute('data-school') === schoolId || option.value === "") {
+                    option.style.display = "block";
+                } else {
+                    option.style.display = "none";
+                }
+            }
+        });
+    </script>
+</body>
+</html>
 {% endblock %}
+

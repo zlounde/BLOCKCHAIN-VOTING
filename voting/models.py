@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import date
-
+from django.utils.timezone import now
 
 # Election Model
 class Election(models.Model):
@@ -22,9 +22,6 @@ class Election(models.Model):
     def __str__(self):
         return self.title
 
-
-from django.db import models
-
 class School(models.Model):
     name = models.CharField(max_length=255)
 
@@ -39,32 +36,31 @@ class Department(models.Model):
         return self.name
 
 class ElectionTitle(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, default='all')
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    start_time = models.DateTimeField(default=now)
+    end_time = models.DateTimeField(default=now)
 
     def __str__(self):
         return self.title
-
-
 
 # Candidate Model
 class Candidate(models.Model):
     election_title = models.ForeignKey(ElectionTitle, on_delete=models.CASCADE, related_name="candidates")
     name = models.CharField(max_length=200)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="candidates", null=True, blank=True)  # ✅ Remove default
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="candidates", null=True, blank=True)
     agenda = models.TextField()
     image = models.ImageField(upload_to='candidates/', blank=True, null=True)
 
     def __str__(self):
         return self.name
 
-
 # Vote Model
 class Vote(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    election_title = models.ForeignKey(ElectionTitle, on_delete=models.CASCADE, default=1)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.user.username} -> {self.candidate.name} ({self.election.title})"
+        return f"{self.user.username} -> {self.candidate.name} ({self.election_title.title})"

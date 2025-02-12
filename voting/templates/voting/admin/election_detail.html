@@ -1,0 +1,155 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ election.title }} - Manage Candidates</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #333;
+        }
+
+        /* Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Title */
+        h3 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Candidate List */
+        .candidate-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .candidate-list li {
+            background: #f9f9f9;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .candidate-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-edit {
+            background: #f1c40f;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #d4ac0d;
+        }
+
+        .btn-delete {
+            background: #c0392b;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #a5281b;
+        }
+
+        .btn-add {
+            background: #3498db;
+            color: white;
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        .btn-add:hover {
+            background: #2980b9;
+        }
+
+        .btn-timer {
+            background: #27ae60;
+            color: white;
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        .btn-timer:hover {
+            background: #1e8449;
+        }
+
+        /* Delete Form Styling */
+        .delete-form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>{{ election.title }} - Manage Candidates</h3>
+        <p><strong>School:</strong> {{ election.school.name }}</p>
+        <p><strong>Department:</strong> {{ election.department.name }}</p>
+
+        <h4>Added Candidates:</h4>
+        {% if candidates %}
+            <ul class="candidate-list">
+                {% for candidate in candidates %}
+                    <li>
+                        <span>{{ candidate.name }} ({{ candidate.department.name }})</span>
+                        <div class="candidate-actions">
+                            <!-- Edit Candidate -->
+                            <a href="{% url 'edit_candidate' candidate.id %}" class="btn btn-edit">Edit</a>
+
+                            <!-- Delete Candidate -->
+                            <form action="{% url 'delete_candidate' candidate.id %}" method="post" class="delete-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-delete">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No candidates found.</p>
+        {% endif %}
+
+        <a href="{% url 'add_candidate' election.id %}" class="btn btn-add">Add Candidate</a>
+
+        <!-- Updated: Proceed to Timer Button -->
+        <a href="" class="btn btn-timer">Proceed to Timer</a>
+    </div>
+</body>
+</html>
+{% endblock %}
