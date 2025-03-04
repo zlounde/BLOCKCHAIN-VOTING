@@ -3,6 +3,10 @@ from . import views  # ✅ Ensure correct import of views
 
 # ✅ Ensure `urlpatterns` is properly defined
 urlpatterns = [
+
+    path('register/', views.register, name='register'),
+    path('login/', views.login, name='login'),
+    # path('vote/<int:election_id>/', views.vote_page, name='vote_page'),    
     path("home/", views.home, name="home"),
     path("about/", views.about, name="About"),  # Fixed inconsistent name
     path("login/", views.user_login_view, name="login"),
@@ -33,4 +37,8 @@ urlpatterns = [
 
     # Timer Page
     path("timer/", views.timer_page, name="timer_page"),
+
+    # vote page
+    path('elections/', views.elections, name='elections'),
+    path('<int:election_id>/vote/', views.vote, name='vote'),
 ]

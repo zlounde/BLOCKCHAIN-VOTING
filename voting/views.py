@@ -7,6 +7,93 @@ from django.http import JsonResponse
 from .models import *
 from .forms import *
 
+
+from django.shortcuts import render, redirect
+from .models import User
+from django.contrib import messages
+
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth import login
+from django.contrib import messages
+from .models import School, Department
+
+User = get_user_model()
+
+def register(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        reg_number = request.POST.get('reg_number')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        school_id = request.POST.get('school')
+        department_id = request.POST.get('department')
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect('register')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists.")
+            return redirect('register')
+
+        if User.objects.filter(reg_number=reg_number).exists():
+            messages.error(request, "Registration number already exists.")
+            return redirect('register')
+
+        school = School.objects.get(id=school_id)
+        department = Department.objects.get(id=department_id)
+
+        user = User.objects.create_user(
+            reg_number=reg_number,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            school=school,
+            department=department
+        )
+
+        login(request, user)
+        messages.success(request, "Registration Successful!")
+        return redirect('home')
+
+    schools = School.objects.all()
+    departments = Department.objects.all()
+    return render(request, 'voting/student/register.html', {'schools': schools, 'departments': departments})
+
+
+
+
+
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+def user_login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Login Successful!")
+            return redirect('home')
+        else:
+            messages.error(request, "Invalid Email or Password")
+            return redirect('login')
+
+    return render(request, 'voting/student/login.html')
+
+
+
+
 # Home Page
 def home(request):
     return render(request, "voting/student/home.html")
@@ -15,20 +102,6 @@ def home(request):
 def about(request):
     return render(request, "voting/student/about.html")
 
-# User Login View
-def user_login_view(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            next_page = request.GET.get('next', 'home')
-            return redirect(next_page)
-        else:
-            messages.error(request, "Invalid username or password.")
-    else:
-        form = AuthenticationForm()
-    return render(request, 'voting/student/login.html', {'form': form})
 
 # User Logout View
 def user_logout_view(request):
@@ -38,7 +111,45 @@ def user_logout_view(request):
 
 # Elections Page
 def elections(request):
-    return render(request, "voting/student/elections.html")
+    # return render(request, "voting/student/elections.html")
+     # Fetch all created election titles with a timer set
+    election_titles = ElectionTitle.objects.filter(start_time__isnull=False, end_time__isnull=False)
+    
+    # Filter elections based on their status
+    upcoming_elections = [election for election in election_titles if election.status == 'Upcoming']
+    ongoing_elections = [election for election in election_titles if election.status == 'Ongoing']
+    completed_elections = [election for election in election_titles if election.status == 'Completed']
+
+    return render(request, "voting/student/elections.html", {
+        "election_titles": ElectionTitle.objects.filter(start_time__isnull=True),  # Only show titles without a timer
+        "upcoming_elections": upcoming_elections,
+        "ongoing_elections": ongoing_elections,
+        "completed_elections": completed_elections,
+    })
+
+# vote page
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def vote(request, election_id):
+    election = get_object_or_404(ElectionTitle, id=election_id)
+    candidates = Candidate.objects.filter(election_title=election)
+
+    if request.method == 'POST':
+        candidate_id = request.POST.get('candidate')
+        candidate = get_object_or_404(Candidate, id=candidate_id, election_title=election)
+
+        # Check if user already voted
+        if Vote.objects.filter(user=request.user, election=election).exists():
+            messages.error(request, "You have already voted in this election.")
+            return redirect('elections')
+
+        # Save the vote
+        Vote.objects.create(user=request.user, election=election, candidate=candidate)
+        messages.success(request, "Vote cast successfully!")
+        return redirect('elections')
+
+    return render(request, 'voting/student/vote.html', {'election': election, 'candidates': candidates})
 
 # View Candidates Page
 def view_candidates(request, title_id):

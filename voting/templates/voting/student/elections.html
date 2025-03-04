@@ -6,13 +6,11 @@
   <title>University Blockchain Voting System</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* General Styles */
     body {
       font-family: 'Roboto', sans-serif;
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      color: #333;
       background: #f4f4f9;
     }
 
@@ -20,71 +18,82 @@
       width: 90%;
       max-width: 1200px;
       margin: 0 auto;
+      padding: 2rem 0;
     }
 
-    /* Navbar */
     .navbar {
       background: #2c3e50;
       color: white;
-      padding: 1rem 0;
       text-align: center;
-    }
-
-    /* Elections Section */
-    .elections {
-      padding: 3rem 0;
-      background: #ecf0f1;
-      text-align: center;
+      padding: 1rem;
     }
 
     .elections h2 {
-      font-size: 2rem;
-      margin-bottom: 2rem;
       color: #2c3e50;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      justify-content: center;
+      padding: 2rem 0;
     }
 
     .card {
       background: white;
       border-radius: 10px;
       padding: 2rem;
-      margin: 1rem auto;
-      max-width: 400px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
     }
 
-    .card h3 {
-      font-size: 1.5rem;
-      margin-top: 0;
-      color: #34495e;
-    }
-
-    .card p {
-      color: #555;
-      margin: 1rem 0;
+    .card:hover {
+      transform: scale(1.05);
     }
 
     .card .countdown {
-      font-weight: bold;
       color: #e67e22;
+      font-weight: bold;
       margin: 1rem 0;
     }
 
     .card .btn {
       display: inline-block;
-      background: #3498db;
-      color: white;
       padding: 0.7rem 1.2rem;
-      text-decoration: none;
-      font-size: 1rem;
-      font-weight: bold;
+      border: none;
       border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      margin-top: 1rem;
     }
 
-    .card .btn:hover {
+    .btn-upcoming {
+      background: #95a5a6;
+      cursor: not-allowed;
+    }
+
+    .btn-ongoing {
+      background: #3498db;
+    }
+
+    .btn-ongoing:hover {
       background: #2980b9;
     }
 
-    /* Footer */
+    .btn-completed {
+      background: #27ae60;
+    }
+
+    .btn-completed:hover {
+      background: #219150;
+    }
+
     .footer {
       background: #2c3e50;
       color: white;
@@ -95,53 +104,78 @@
   </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <header class="navbar">
-    <h1>University Blockchain Voting System</h1>
-  </header>
+<header class="navbar">
+  <h1>University Blockchain Voting System</h1>
+</header>
 
-  <!-- Ongoing Elections Section -->
-  <section class="elections">
-    <div class="container">
-      <h2>Ongoing Elections</h2>
-
-      {% for election in ongoing_elections %}
-      <div class="card">
-        <h3>{{ election.title }}</h3>
-        <p>Date: {{ election.date }}</p>
-        <a href="{{ election.id }}/candidates/" class="btn">View Candidates</a>
-        <a href="{{ election.id }}/vote/" class="btn">Vote Now</a>
-      </div>
-      {% empty %}
-      <p>No ongoing elections at the moment.</p>
-      {% endfor %}
+<div class="container">
+  <h2>Upcoming Elections</h2>
+  <div class="cards-container">
+    {% for election in upcoming_elections %}
+    <div class="card">
+      <h3>{{ election.title }}</h3>
+      <p>Starts: {{ election.start_time|date:"Y-m-d H:i" }}</p>
+      <p class="countdown" data-time="{{ election.start_time|date:'Y-m-d H:i:s' }}"></p>
+      <button class="btn btn-upcoming" disabled>Upcoming</button>
     </div>
-  </section>
+    {% empty %}
+    <p>No upcoming elections.</p>
+    {% endfor %}
+  </div>
 
-  <!-- Upcoming Elections Section -->
-  <section class="elections">
-    <div class="container">
-      <h2>Upcoming Elections</h2>
-
-      {% for election in upcoming_elections %}
-      <div class="card">
-        <h3>{{ election.title }}</h3>
-        <p>Date: {{ election.date }}</p>
-        <p class="countdown">Time left: {{ election.countdown }}</p>
-        <a href="{{ election.id }}/candidates/" class="btn">View Candidates</a>
-      </div>
-      {% empty %}
-      <p>No upcoming elections at the moment.</p>
-      {% endfor %}
+  <h2>Ongoing Elections</h2>
+  <div class="cards-container">
+    {% for election in ongoing_elections %}
+    <div class="card">
+      <h3>{{ election.title }}</h3>
+      <p>Ends: {{ election.end_time|date:"Y-m-d H:i" }}</p>
+      <a href="{% url 'vote_page' election_id=title.id %}" class="btn btn-primary">Vote Now</a>
+    </a>
     </div>
-  </section>
+    {% empty %}
+    <p>No ongoing elections.</p>
+    {% endfor %}
+  </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <p>&copy; 2025 University Blockchain Voting System. All rights reserved.</p>
+  <h2>Completed Elections</h2>
+  <div class="cards-container">
+    {% for election in completed_elections %}
+    <div class="card">
+      <h3>{{ election.title }}</h3>
+      <p>Ended: {{ election.end_time|date:"Y-m-d H:i" }}</p>
+      <a href="{{ election.id }}/results/" class="btn btn-completed">View Results</a>
     </div>
-  </footer>
+    {% empty %}
+    <p>No completed elections.</p>
+    {% endfor %}
+  </div>
+</div>
 
+<footer class="footer">
+  <p>&copy; 2025 University Blockchain Voting System. All rights reserved.</p>
+</footer>
+
+<script>
+  function updateCountdown() {
+    document.querySelectorAll('.countdown').forEach(function(el) {
+      let endTime = new Date(el.getAttribute('data-time')).getTime();
+      let now = new Date().getTime();
+      let timeLeft = endTime - now;
+
+      if (timeLeft > 0) {
+        let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        el.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      } else {
+        el.innerHTML = "Election Started";
+      }
+    });
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
 </body>
 </html>

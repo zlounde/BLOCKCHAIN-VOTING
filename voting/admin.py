@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Candidate, School, Department, ElectionTitle
+from .models import *
 
 # Register other models
-# admin.site.register(Election)
+admin.site.register(User)
 admin.site.register(Candidate)
 admin.site.register(School)
 admin.site.register(Department) 
