@@ -1,26 +1,9 @@
 from django.db import models
 from datetime import date
 from django.utils.timezone import now
+from django.db import models
+from django.utils import timezone
 
-# Election Model
-class Election(models.Model):
-    STATUS_CHOICES = [
-        ('Upcoming', 'Upcoming'),
-        ('Ongoing', 'Ongoing'),
-        ('Completed', 'Completed'),
-    ]
-
-    title = models.CharField(max_length=255)
-    date = models.DateField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Upcoming')
-
-    def countdown(self):
-        """Returns the number of days left for an upcoming election."""
-        days_left = (self.date - date.today()).days
-        return f"{days_left} days left" if days_left > 0 else "Election Day!"
-
-    def __str__(self):
-        return self.title
 
 class School(models.Model):
     name = models.CharField(max_length=255)
@@ -35,15 +18,32 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
+
 class ElectionTitle(models.Model):
     title = models.CharField(max_length=255, default='all')
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    start_time = models.DateTimeField(default=now)
-    end_time = models.DateTimeField(default=now)
+    start_time = models.DateTimeField(null=True, blank=True)  # Allow null values
+    end_time = models.DateTimeField(null=True, blank=True)    # Allow null values
 
     def __str__(self):
         return self.title
+
+    @property
+    def status(self):
+        """
+        Dynamically calculate the status based on the current time.
+        """
+        now = timezone.now()
+
+        if self.start_time is None or self.end_time is None:
+            return "Not Scheduled"
+        elif now < self.start_time:
+            return "Upcoming"
+        elif self.start_time <= now <= self.end_time:
+            return "Ongoing"
+        else: 
+            return "Completed"
 
 # Candidate Model
 class Candidate(models.Model):

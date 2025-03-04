@@ -1,0 +1,13 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+
+<div class="container">
+    <h2>{{ election.title }}</h2>
+    <p>School: {{ election.school.name }}</p>
+    <p>Department: {{ election.department.name }}</p>
+    <p>Start Time: {{ election.start_time|date:"Y-m-d H:i" }}</p>
+    <p>End Time: {{ election.end_time|date:"Y-m-d H:i" }}</p>
+    <p>Status: {{ election.status }}</p>
+</div>
+
+{% endblock %}

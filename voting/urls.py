@@ -9,14 +9,15 @@ urlpatterns = [
     path("logout/", views.user_logout_view, name="logout"),
     path("profile/", views.profile, name="profile"),
     
-    path("", views.election_list, name="election_list"),
+    # path("", views.election_list, name="election_list"),
     path("elections/", views.elections, name="elections"),
     
     # Manage Elections
     path("manage-election/<int:title_id>/", views.view_candidates, name="manage_election"),
     path("election/<int:election_id>/", views.view_candidates, name="view_candidates"),
-    path("election/<int:election_id>/vote/", views.vote, name="vote"),
-    path("election/<int:election_id>/results/", views.results, name="results"),
+    # path("election/<int:election_id>/vote/", views.vote, name="vote"),
+    # path("election/<int:election_id>/results/", views.results, name="results"),
+    path('election_detail/<int:election_id>/', views.election_detail, name='election_detail'),
 
     # Admin Section
     path("admin-section/", views.admin_section, name="admin_section"),

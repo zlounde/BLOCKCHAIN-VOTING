@@ -75,7 +75,7 @@
             transition: background 0.3s;
             width: 100%;
         }
-
+ 
         button:hover {
             background: #2980b9;
         }
@@ -113,22 +113,6 @@
         </form>
     </div>
 
-    <script>
-        document.getElementById('school').addEventListener('change', function() {
-            var schoolId = this.value;
-            var departmentDropdown = document.getElementById('department');
-            
-            for (var i = 0; i < departmentDropdown.options.length; i++) {
-                var option = departmentDropdown.options[i];
-                
-                if (option.getAttribute('data-school') === schoolId || option.value === "") {
-                    option.style.display = "block";
-                } else {
-                    option.style.display = "none";
-                }
-            }
-        });
-    </script>
 </body>
 </html>
 {% endblock %}
