@@ -4,14 +4,13 @@ from . import views  # ✅ Ensure correct import of views
 # ✅ Ensure `urlpatterns` is properly defined
 urlpatterns = [
 
-    path('register/', views.register, name='register'),
-    path('login/', views.login, name='login'),
+    path('register/', views.register, name='register'),    
     # path('vote/<int:election_id>/', views.vote_page, name='vote_page'),    
     path("home/", views.home, name="home"),
-    path("about/", views.about, name="About"),  # Fixed inconsistent name
+    path("about/", views.about, name="about"),  # Fixed inconsistent name
     path("login/", views.user_login_view, name="login"),
-    path("logout/", views.user_logout_view, name="logout"),
-    path("profile/", views.profile, name="profile"),
+    path('logout/', views.user_logout_view, name='user_logout'),
+    path('profile/', views.profile, name='profile'),
     
     # path("", views.election_list, name="election_list"),
     path("elections/", views.elections, name="elections"),
@@ -39,6 +38,10 @@ urlpatterns = [
     path("timer/", views.timer_page, name="timer_page"),
 
     # vote page
-    path('elections/', views.elections, name='elections'),
+    path('elections/', views.elections, name='elections'),    
     path('<int:election_id>/vote/', views.vote, name='vote'),
+    path('vote/<int:election_id>/', views.vote, name='vote'),
+    # path('election/<int:title_id>/vote/', views.vote, name='vote'),
+    path('<int:election_id>/results/', views.view_results, name='view_results'),
+
 ]

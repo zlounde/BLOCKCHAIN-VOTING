@@ -6,6 +6,7 @@ admin.site.register(User)
 admin.site.register(Candidate)
 admin.site.register(School)
 admin.site.register(Department) 
+admin.site.register(Vote) 
 
 from django.contrib import admin
 from .models import ElectionTitle

@@ -45,8 +45,7 @@ class ElectionTitle(models.Model):
             return "Completed"
 
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, reg_number, email, password=None, **extra_fields):
@@ -104,6 +103,6 @@ class Vote(models.Model):
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, null=True)
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
-    def __str__(self):
-        return f"{self.user.fullname} voted for {self.candidate.name} in {self.election.title}"
+    # def __str__(self):
+    #     return f"{self.user.first_name} voted for {self.candidate.name} in {self.election.title}"
 

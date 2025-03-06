@@ -1,12 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Profile</title>
-</head>
-<body>
-  <h1>Welcome to Your Profile</h1>
-  <p>Here you can view and manage your account details.</p>
-</body>
-</html>
+{% extends 'voting/student/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>User Profile</h2>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Registration Number:</strong> {{ user.reg_number }}</p>
+            <p><strong>School:</strong> {{ user.school }}</p>
+            <p><strong>Department:</strong> {{ user.department }}</p>
+        </div>
+    </div>
+    <a href="{% url 'user_logout' %}" class="btn btn-danger mt-3">Logout</a>
+</div>
+{% endblock %}

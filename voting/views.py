@@ -7,15 +7,10 @@ from django.http import JsonResponse
 from .models import *
 from .forms import *
 
-
 from django.shortcuts import render, redirect
 from .models import User
 from django.contrib import messages
-
-
 from django.contrib.auth import get_user_model
-from django.contrib.auth import login
-from django.contrib import messages
 from .models import School, Department
 
 User = get_user_model()
@@ -80,9 +75,9 @@ def user_login_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, email=email, password=password)
+        user = authenticate(request, username=email, password=password)
         if user is not None:
-            login(request, user)
+            login(request, user)  # Correct usage of login()
             messages.success(request, "Login Successful!")
             return redirect('home')
         else:
@@ -92,22 +87,27 @@ def user_login_view(request):
     return render(request, 'voting/student/login.html')
 
 
-
-
 # Home Page
 def home(request):
     return render(request, "voting/student/home.html")
 
 # About Page
 def about(request):
-    return render(request, "voting/student/about.html")
+    return render(request, "voting/student/About.html")
 
 
-# User Logout View
+# Logout View
 def user_logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out.")
-    return redirect('home')
+    return redirect('login')  # Redirect to Login Page
+
+# Profile Page
+@login_required
+def profile(request):
+    user = request.user
+    return render(request, "voting/student/profile.html", {'user': user})
+
 
 # Elections Page
 def elections(request):
@@ -129,27 +129,83 @@ def elections(request):
 
 # vote page
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import ElectionTitle, Candidate, Vote
+
+
+def vote(request, title_id):
+    title = get_object_or_404(ElectionTitle, id=title_id)
+    candidates = Candidate.objects.filter(election_title=title)
+    return render(request, 'voting/student/vote.html', {'title': title, 'candidates': candidates})
 
 @login_required
 def vote(request, election_id):
     election = get_object_or_404(ElectionTitle, id=election_id)
     candidates = Candidate.objects.filter(election_title=election)
+    vote_instance = Vote.objects.filter(user=request.user, election=election).first()
+    has_voted = vote_instance is not None
 
-    if request.method == 'POST':
-        candidate_id = request.POST.get('candidate')
+    if request.method == 'POST' and not has_voted:
+        candidate_id = request.POST.get('selected_candidate')
         candidate = get_object_or_404(Candidate, id=candidate_id, election_title=election)
-
-        # Check if user already voted
-        if Vote.objects.filter(user=request.user, election=election).exists():
-            messages.error(request, "You have already voted in this election.")
-            return redirect('elections')
-
-        # Save the vote
+        
+        # Create the vote
         Vote.objects.create(user=request.user, election=election, candidate=candidate)
         messages.success(request, "Vote cast successfully!")
-        return redirect('elections')
+        return redirect('home')
 
-    return render(request, 'voting/student/vote.html', {'election': election, 'candidates': candidates})
+    total_votes = Vote.objects.filter(election=election).count()
+    
+    # Attach vote count to each candidate
+    for candidate in candidates:
+        candidate.vote_count = Vote.objects.filter(candidate=candidate).count()
+
+    voted_candidate_id = vote_instance.candidate.id if has_voted else None
+
+    return render(request, 'voting/student/vote.html', {
+        'title': election,
+        'candidates': candidates,
+        'has_voted': has_voted,
+        'voted_candidate_id': voted_candidate_id,
+        'total_votes': total_votes,
+    })
+
+# view results
+from django.utils import timezone
+
+
+@login_required
+def view_results(request, election_id):
+    election = get_object_or_404(ElectionTitle, id=election_id)
+    candidates = Candidate.objects.filter(election_title=election)
+    total_votes = Vote.objects.filter(election=election).count()
+
+    # Check if the election is Completed based on the time
+    if election.end_time and election.end_time < timezone.now():
+        # Calculate vote count for each candidate
+        for candidate in candidates:
+            candidate.vote_count = Vote.objects.filter(candidate=candidate).count()
+
+        # Sort candidates by vote count (Descending Order)
+        candidates = sorted(candidates, key=lambda x: x.vote_count, reverse=True)
+
+        # Pass the highest vote count to the template
+        highest_votes = candidates[0].vote_count if candidates else 0
+
+        return render(request, 'voting/student/results.html', {
+            'title': election,
+            'candidates': candidates,
+            'total_votes': total_votes,
+            'highest_votes': highest_votes
+        })
+    else:
+        messages.error(request, "Results are not available. The election is still ongoing or upcoming.")
+        return redirect('home')
+
+
+
+
 
 # View Candidates Page
 def view_candidates(request, title_id):

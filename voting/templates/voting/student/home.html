@@ -27,6 +27,7 @@
       color: white;
       padding: 1rem 0;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
     }
 
     .navbar-content {
@@ -73,19 +74,20 @@
       position: absolute;
       top: 1rem;
       right: 1rem;
+      text-align: center;
     }
 
     .profile-icon {
+      width: 100px;
+      height: 40px;
+      border-radius: 5px;
+      background-color: #e67e22;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      background-color: #e67e22;
-      color: white;
-      font-size: 1.2rem;
-      cursor: pointer;
       transition: background 0.3s ease;
     }
 
@@ -96,7 +98,7 @@
     .dropdown-menu {
       display: none;
       position: absolute;
-      top: 40px;
+      top: 45px;
       right: 0;
       background: white;
       color: #333;
@@ -104,10 +106,7 @@
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       min-width: 150px;
-    }
-
-    .profile-dropdown:hover .dropdown-menu {
-      display: block;
+      z-index: 1000;
     }
 
     .dropdown-menu a {
@@ -121,6 +120,19 @@
 
     .dropdown-menu a:hover {
       background-color: #f4f4f9;
+    }
+
+    .dropdown-menu a.logout {
+      color: white;
+      background-color: green;
+      text-align: center;
+      border-radius: 5px;
+      padding: 0.5rem;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a.logout:hover {
+      background-color: darkgreen;
     }
 
     /* Hero Section */
@@ -157,32 +169,6 @@
       background: #d35400;
     }
 
-    /* Info Section */
-    .info-section {
-      padding: 3rem 1rem;
-      background: #ffffff;
-      text-align: left;
-    }
-
-    .info-section h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: #2c3e50;
-    }
-
-    .info-section p {
-      font-size: 1rem;
-      margin-bottom: 1rem;
-      color: #555;
-    }
-
-    .info-section img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 10px;
-      margin-bottom: 1rem;
-    }
-
     /* Footer */
     .footer {
       background: #2c3e50;
@@ -203,40 +189,29 @@
         <nav>
           <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'About' %}">About</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
         </nav>
       </div>
       <div class="profile-dropdown">
-        <div class="profile-icon">
+        <div class="profile-icon" onclick="toggleDropdown()">
           <span>User</span>
         </div>
-        <div class="dropdown-menu">
-          <a href="#">Profile</a>
-          <a href="#">Logout</a>
+        <div class="dropdown-menu" id="dropdown-menu">
+          <a href="{% url 'profile' %}">Profile</a>
+          <a href="{% url 'login' %}" class="logout">Logout</a>
         </div>
       </div>
     </div>
   </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-      <div class="container">
-        <h2>Secure & Transparent University Elections</h2>
-        <p>Empowering voters with blockchain technology for a fair and efficient voting experience.</p>
-        <a href="{% url 'elections' %}" class="btn">Elections</a>
-      </div>
-    </section>
-
-  <!-- Info Section -->
-  <section id="info" class="info-section">
+  <!-- Hero Section -->
+  <section id="home" class="hero">
     <div class="container">
-      <h2>Why Choose Online Voting?</h2>
-      <p>Online voting empowers universities to create a fair and transparent election process. It ensures accessibility for all participants, including those studying abroad or working remotely. With blockchain technology, elections become secure, efficient, and tamper-proof.</p>
-      <img src="example.jpg" alt="Online Voting Illustration">
-      <h2>Easy and Efficient Election Management</h2>
-      <p>Our platform allows you to organize elections without special hardware or software. It's simple to manage the electoral roll, communicate with voters, and process results directly online, saving time and resources.</p>
+      <h2>Secure & Transparent University Elections</h2>
+      <p>Empowering voters with blockchain technology for a fair and efficient voting experience.</p>
+      <a href="{% url 'elections' %}" class="btn">Elections</a>
     </div>
   </section>
 
@@ -246,5 +221,18 @@
       <p>&copy; 2025 University Blockchain Voting System. All rights reserved.</p>
     </div>
   </footer>
+
+  <script>
+    function toggleDropdown() {
+      const dropdown = document.getElementById('dropdown-menu');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.closest('.profile-dropdown')) {
+        document.getElementById('dropdown-menu').style.display = 'none';
+      }
+    }
+  </script>
 </body>
 </html>

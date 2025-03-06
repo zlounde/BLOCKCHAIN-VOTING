@@ -1,16 +1,96 @@
-<!-- templates/elections/results.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Results</title>
+    <title>{{ title.title }} - Election Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 40px 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .candidate-card {
+            background: #f1f1f1;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        .candidate-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 20px;
+            position: relative;
+        }
+        .winner {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            font-weight: bold;
+        }
+        .winner-badge {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background: #ffc107;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .total-votes {
+            padding: 10px;
+            font-size: 1.2rem;
+            background: #007bff;
+            color: white;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h1>{{ election.title }} - Results</h1>
-  <ul>
-    {% for candidate, count in votes.items %}
-      <li>{{ candidate }}: {{ count }} votes</li>
+<div class="container">
+    <h1>{{ title.title }} - Election Results</h1>
+    <div class="total-votes">
+        Total Votes Cast: {{ total_votes }}
+    </div>
+
+    {% if candidates %}
+    {% for candidate in candidates %}
+    <div class="candidate-card {% if candidate.vote_count == highest_votes and highest_votes > 0 %}winner{% endif %}">
+        {% if candidate.vote_count == highest_votes and highest_votes > 0 %}
+        <div class="winner-badge">🏆 Winner</div>
+        {% endif %}
+        <img src="{{ candidate.image.url }}" class="candidate-image" alt="{{ candidate.name }}">
+        <div>
+            <h3>{{ candidate.name }}</h3>
+            <p>{{ candidate.department }}</p>
+        </div>
+        <div>
+            <strong>Votes: {{ candidate.vote_count }}</strong>
+        </div>
+    </div>
     {% endfor %}
-  </ul>
-  <a href="/">Back to Elections</a>
+    {% else %}
+    <p>No candidates available.</p>
+    {% endif %}
+
+    <a href="{% url 'home' %}" class="btn btn-primary mt-4">Back to Home</a>
+</div>
 </body>
 </html>
