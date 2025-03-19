@@ -1,3 +1,23 @@
+from web3 import Web3
+import json
+
+# Connect to Ganache
+ganache_url = "http://127.0.0.1:7545"
+web3 = Web3(Web3.HTTPProvider(ganache_url))
+
+# Load ABI and bytecode only when necessary
+def get_contract():
+    abi_path = "university_voting_system/blockchain/build/Voting_sol_Voting.abi"
+    contract_address = "0x79f3a3352EDF68578Ff4C47b3e15101AC7A9E81b"
+    checksum_address = Web3.to_checksum_address(contract_address)
+
+    with open(abi_path) as abi_file:
+        abi = json.load(abi_file)
+
+    return web3.eth.contract(address=checksum_address, abi=abi)
+
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -150,9 +170,36 @@ def vote(request, election_id):
         candidate_id = request.POST.get('selected_candidate')
         candidate = get_object_or_404(Candidate, id=candidate_id, election_title=election)
         
-        # Create the vote
-        Vote.objects.create(user=request.user, election=election, candidate=candidate)
-        messages.success(request, "Vote cast successfully!")
+        # Connect to the blockchain
+        contract = get_contract()
+        user_address = web3.eth.accounts[1]  # Assuming student is using the second account
+
+        try:
+            # Ensure the candidate has a blockchain_id
+            if candidate.blockchain_id is None:
+                messages.error(request, "This candidate has not been added to the blockchain.")
+                return redirect("elections")
+
+            # Check if the user has already voted on the blockchain
+            if contract.functions.hasVoted(user_address).call():
+                messages.error(request, "You have already voted and cannot vote again.")
+                return redirect("elections")
+
+            # Cast the vote on the blockchain
+            tx_hash = contract.functions.vote(candidate.blockchain_id).transact({"from": user_address})
+            tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+
+            # Update the vote count in the local database
+            blockchain_vote_count = contract.functions.getCandidate(candidate.blockchain_id).call()[1]
+            candidate.vote_count = blockchain_vote_count
+            candidate.save()
+
+            # Create the vote in the local database
+            Vote.objects.create(user=request.user, election=election, candidate=candidate)
+            messages.success(request, "Vote cast successfully!")
+        except Exception as e:
+            messages.error(request, f"An error occurred while voting: {str(e)}")
+        
         return redirect('home')
 
     total_votes = Vote.objects.filter(election=election).count()
@@ -174,7 +221,6 @@ def vote(request, election_id):
 # view results
 from django.utils import timezone
 
-
 @login_required
 def view_results(request, election_id):
     election = get_object_or_404(ElectionTitle, id=election_id)
@@ -183,15 +229,27 @@ def view_results(request, election_id):
 
     # Check if the election is Completed based on the time
     if election.end_time and election.end_time < timezone.now():
-        # Calculate vote count for each candidate
-        for candidate in candidates:
-            candidate.vote_count = Vote.objects.filter(candidate=candidate).count()
+        # Fetch candidates from the blockchain
+        contract = get_contract()
+        candidates_count = contract.functions.candidatesCount().call()
+
+        candidates_from_contract = [
+            contract.functions.getCandidate(i).call()
+            for i in range(candidates_count)
+        ]
+
+        # Filter out "Candidate 1" and "Candidate 2" from the list
+        candidates_with_votes = [
+            {"name": candidate[0], "id": i, "vote_count": candidate[1]}
+            for i, candidate in enumerate(candidates_from_contract)
+            if candidate[0] not in ["Candidate 1", "Candidate 2"]
+        ]
 
         # Sort candidates by vote count (Descending Order)
-        candidates = sorted(candidates, key=lambda x: x.vote_count, reverse=True)
+        candidates = sorted(candidates_with_votes, key=lambda x: x['vote_count'], reverse=True)
 
         # Pass the highest vote count to the template
-        highest_votes = candidates[0].vote_count if candidates else 0
+        highest_votes = candidates[0]['vote_count'] if candidates else 0
 
         return render(request, 'voting/student/results.html', {
             'title': election,
@@ -317,7 +375,24 @@ def add_or_edit_candidate(request, election_id=None, candidate_id=None):
             if election:
                 candidate.election_title = election
             candidate.save()
-            messages.success(request, "Candidate saved successfully!")
+
+            # Connect to the blockchain
+            contract = get_contract()
+            user_address = web3.eth.accounts[0]  # Assuming the owner is using the first account
+
+            try:
+                # Add candidate to the blockchain
+                tx_hash = contract.functions.addCandidate(candidate.name).transact({"from": user_address})
+                receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+
+                # Update the candidate object with the blockchain ID
+                candidate.blockchain_id = contract.functions.candidatesCount().call() - 1  # Blockchain ID is zero-based
+                candidate.save()
+
+                messages.success(request, "Candidate added successfully!")
+            except Exception as e:
+                messages.error(request, f"An error occurred while adding candidate: {str(e)}")
+            
             return redirect('election_detail', election_id=candidate.election_title.id)
 
     else:

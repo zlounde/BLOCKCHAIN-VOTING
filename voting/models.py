@@ -92,7 +92,7 @@ class Candidate(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="candidates", null=True, blank=True)
     agenda = models.TextField()
     image = models.ImageField(upload_to='candidates/', blank=True, null=True)
-
+    blockchain_id = models.IntegerField(null=True, blank=True)  # New field for the blockchain ID
     def __str__(self):
         return self.name
 
